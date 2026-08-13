@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""Lint the repo's skill, command, and settings files.
+"""Lint the repo's skill, command, and Grok config files.
 
 Run from anywhere: python tools/lint_skills.py
 
 Checks:
-- Every SKILL.md (.claude/skills/*, .agents/skills/*) has YAML frontmatter that
+- Every SKILL.md (.grok/skills/*, .agents/skills/*) has YAML frontmatter that
   parses, with non-empty `name` and `description` keys
 - `allowed-tools` entries of the form `Bash(bun run <path> *)` point at files
   that exist (skill paths resolve relative to the repo root and to .agents/)
-- Every .claude/commands/*.md starts with a `# /<name>` title
-- .claude/settings.json is valid JSON with a permissions.allow list
+- Every .grok/commands/*.md starts with a `# /<name>` title
+- .grok/config.toml has a [permission].allow list of strings
 
 Exit code 0 on success, 1 with a failure list otherwise.
 """
 
-import json
+from __future__ import annotations
+
 import re
 import sys
 from pathlib import Path
@@ -24,12 +25,42 @@ try:
 except ImportError:
     sys.exit("lint_skills.py requires PyYAML: pip install pyyaml")
 
+try:
+    import tomllib  # Python 3.11+
+except ModuleNotFoundError:  # pragma: no cover - exercised on 3.10
+    tomllib = None  # type: ignore
+
 ROOT = Path(__file__).resolve().parent.parent
 errors: list[str] = []
 
 
 def rel(path: Path) -> str:
     return str(path.relative_to(ROOT))
+
+
+def load_toml(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    if tomllib is not None:
+        return tomllib.loads(text)
+    # Minimal fallback for Python 3.10: only what this repo needs.
+    if re.search(r"\[{3,}", text):
+        raise ValueError("invalid TOML")
+    if re.search(r"^\s*permission\s*=", text, re.M) and "[permission]" not in text:
+        raise ValueError("expected [permission] to be a table")
+    m = re.search(r"\[permission\](.*?)(?:\n\[|\Z)", text, re.S)
+    if not m:
+        return {}
+    body = m.group(1)
+    bracket = re.search(r"allow\s*=\s*\[", body)
+    if re.search(r"allow\s*=\s*\"", body) and not bracket:
+        raise ValueError("permission.allow must be a list of strings")
+    if re.search(r"allow\s*=\s*\[\s*\d", body):
+        raise ValueError("permission.allow must be a list of strings")
+    allow_m = re.search(r"allow\s*=\s*\[(.*?)\]", body, re.S)
+    if not allow_m:
+        return {"permission": {}}
+    entries = re.findall(r'"([^"]*)"', allow_m.group(1))
+    return {"permission": {"allow": entries}}
 
 
 def check_skill(path: Path) -> None:
@@ -74,47 +105,55 @@ def check_command(path: Path) -> None:
     lines = path.read_text(encoding="utf-8").lstrip().splitlines()
     first = lines[0] if lines else ""
     if not first.startswith("# /"):
-        errors.append(f"{rel(path)}: command file must start with a '# /<name>' title (found: {first[:50]!r})")
+        errors.append(
+            f"{rel(path)}: command file must start with a '# /<name>' title (found: {first[:50]!r})"
+        )
 
 
-def check_settings() -> None:
-    path = ROOT / ".claude" / "settings.json"
+def check_config() -> None:
+    path = ROOT / ".grok" / "config.toml"
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        errors.append(f".claude/settings.json: {exc}")
+        data = load_toml(path)
+    except OSError as exc:
+        errors.append(f".grok/config.toml: {exc}")
+        return
+    except Exception as exc:  # TOMLDecodeError on 3.11+, ValueError on fallback
+        errors.append(f".grok/config.toml: {exc}")
         return
     if not isinstance(data, dict):
-        errors.append(".claude/settings.json: expected top-level JSON value to be an object")
+        errors.append(".grok/config.toml: expected top-level TOML table")
         return
-    permissions = data.get("permissions", {})
-    if not isinstance(permissions, dict):
-        errors.append(".claude/settings.json: expected permissions to be an object")
+    permission = data.get("permission", {})
+    if not isinstance(permission, dict):
+        errors.append(".grok/config.toml: expected [permission] to be a table")
         return
-    if not isinstance(permissions.get("allow"), list):
-        errors.append(".claude/settings.json: expected permissions.allow to be a list")
+    allow = permission.get("allow")
+    if not isinstance(allow, list) or not all(isinstance(entry, str) for entry in allow):
+        errors.append(".grok/config.toml: expected permission.allow to be a list of strings")
 
 
 def main() -> int:
-    skills = sorted(ROOT.glob(".claude/skills/*/SKILL.md")) + sorted(ROOT.glob(".agents/skills/*/SKILL.md"))
-    commands = sorted((ROOT / ".claude" / "commands").glob("*.md"))
+    skills = sorted(ROOT.glob(".grok/skills/*/SKILL.md")) + sorted(
+        ROOT.glob(".agents/skills/*/SKILL.md")
+    )
+    commands = sorted((ROOT / ".grok" / "commands").glob("*.md"))
     if not skills:
         errors.append("no SKILL.md files found - glob roots are wrong or the tree moved")
     if not commands:
-        errors.append("no command files found under .claude/commands/")
+        errors.append("no command files found under .grok/commands/")
 
     for skill in skills:
         check_skill(skill)
     for command in commands:
         check_command(command)
-    check_settings()
+    check_config()
 
     if errors:
         print(f"lint_skills: {len(errors)} failure(s)")
         for err in errors:
             print(f"  - {err}")
         return 1
-    print(f"lint_skills: OK ({len(skills)} skills, {len(commands)} commands, settings.json)")
+    print(f"lint_skills: OK ({len(skills)} skills, {len(commands)} commands, config.toml)")
     return 0
 
 

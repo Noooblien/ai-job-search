@@ -3,15 +3,15 @@
 
 Run from anywhere: python tools/security_guards.py
 
-This repo ships pre-approved Claude Code permissions and CLI code that every
-fork user executes. These guards make the dangerous changes LOUD, not
+This Grok-native fork ships pre-approved Grok Build permissions and CLI code
+that every user executes. These guards make the dangerous changes LOUD, not
 impossible: a PR that intentionally needs one of them must update the
 allowlists in this file in the same diff, so the change is explicit and
 reviewable rather than buried.
 
 Checks:
-1. .claude/settings.json — every permissions.allow entry must be in the exact
-   allowlist below. Catches permission widening (e.g. Bash(*), Bash(curl:*)),
+1. .grok/config.toml — every permission.allow entry must be in the exact
+   allowlist below. Catches permission widening (e.g. Bash(*), Bash(curl *)),
    which would auto-approve commands on every fork.
 2. .gitignore — the personal-data ignore rules must all still be present,
    and no un-allowlisted negation (!pattern) may re-include them. Catches
@@ -24,33 +24,67 @@ Checks:
 Stdlib only. Exit 0 on success, 1 with a failure list otherwise.
 """
 
+from __future__ import annotations
+
 import json
+import re
 import sys
 from pathlib import Path
+
+try:
+    import tomllib  # Python 3.11+
+except ModuleNotFoundError:  # pragma: no cover
+    tomllib = None  # type: ignore
 
 ROOT = Path(__file__).resolve().parent.parent
 errors: list[str] = []
 
+
+def load_toml(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    if tomllib is not None:
+        return tomllib.loads(text)
+    # Minimal fallback for Python 3.10 (same shape as tools/lint_skills.py).
+    if re.search(r"\[{3,}", text):
+        raise ValueError("invalid TOML")
+    if re.search(r"^\s*permission\s*=", text, re.M) and "[permission]" not in text:
+        raise ValueError("permission must be a table")
+    m = re.search(r"\[permission\](.*?)(?:\n\[|\Z)", text, re.S)
+    if not m:
+        return {}
+    body = m.group(1)
+    if re.search(r"allow\s*=\s*\"", body) and not re.search(r"allow\s*=\s*\[", body):
+        raise ValueError("permission.allow must be a list of strings")
+    if re.search(r"allow\s*=\s*\[\s*\d", body):
+        raise ValueError("permission.allow must be a list of strings")
+    allow_m = re.search(r"allow\s*=\s*\[(.*?)\]", body, re.S)
+    if not allow_m:
+        return {"permission": {}}
+    entries = re.findall(r'"([^"]*)"', allow_m.group(1))
+    return {"permission": {"allow": entries}}
+
 # The exact permission entries the template ships. A PR that adds or changes
 # an entry must add it here too - that is the point: the diff shows both.
 ALLOWED_PERMISSIONS = {
-    "Skill(job-application-assistant)",
-    "Bash(bun run:*)",
-    "Bash(python salary_lookup.py:*)",
-    "Bash(python3 salary_lookup.py:*)",
-    "Bash(pdftotext:*)",
+    "Bash(bun run *)",
+    "Bash(python salary_lookup.py *)",
+    "Bash(python3 salary_lookup.py *)",
+    "Bash(pdftotext *)",
 }
 
 # Personal-data ignore rules that must never disappear from .gitignore.
 REQUIRED_IGNORE_RULES = [
     "salary_data.json",
     # Depth-independent: the job-scraper skill resolves `job_scraper/` relative
-    # to its own directory, so the state file lands under .claude/skills/... and
+    # to its own directory, so the state file lands under .grok/skills/... and
     # a repo-rooted rule silently fails to match it.
     "**/job_scraper/seen_jobs.json",
-    "cv/main_*.tex",
+    "cv/*.tex",
     "!cv/main_example.tex",
-    "cover_letters/cover_*.tex",
+    "cv/private/",
+    "cover_letters/*.tex",
+    "!cover_letters/cover_example.tex",
+    "cover_letters/private/",
     "documents/cv/**",
     "documents/linkedin/**",
     "documents/diplomas/**",
@@ -78,35 +112,38 @@ FORBIDDEN_SCRIPTS = {"preinstall", "install", "postinstall", "prepare", "prepack
 
 
 def check_permissions() -> None:
-    path = ROOT / ".claude" / "settings.json"
+    path = ROOT / ".grok" / "config.toml"
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        errors.append(f".claude/settings.json: unreadable or invalid JSON: {exc}")
+        data = load_toml(path)
+    except OSError as exc:
+        errors.append(f".grok/config.toml: unreadable or invalid TOML: {exc}")
+        return
+    except Exception as exc:
+        errors.append(f".grok/config.toml: unreadable or invalid TOML: {exc}")
         return
     if not isinstance(data, dict):
-        errors.append(".claude/settings.json: top-level JSON value must be an object")
+        errors.append(".grok/config.toml: top-level value must be a table")
         return
-    permissions = data.get("permissions", {})
-    if not isinstance(permissions, dict):
-        errors.append(".claude/settings.json: permissions must be an object")
+    permission = data.get("permission", {})
+    if not isinstance(permission, dict):
+        errors.append(".grok/config.toml: permission must be a table")
         return
-    allow = permissions.get("allow", [])
+    allow = permission.get("allow", [])
     if not isinstance(allow, list) or not all(isinstance(entry, str) for entry in allow):
-        errors.append(".claude/settings.json: permissions.allow must be a list of strings")
+        errors.append(".grok/config.toml: permission.allow must be a list of strings")
         return
     for entry in allow:
         if entry not in ALLOWED_PERMISSIONS:
             errors.append(
-                f".claude/settings.json: permission not in the reviewed allowlist: {entry!r}. "
+                f".grok/config.toml: permission not in the reviewed allowlist: {entry!r}. "
                 "Pre-approved permissions run without prompting on every fork. If this entry is "
                 "intentional, add it to ALLOWED_PERMISSIONS in tools/security_guards.py in the "
                 "same PR so the widening is explicit and reviewable."
             )
     for entry in ALLOWED_PERMISSIONS - set(allow):
-        # Not an error: settings may legitimately drop an entry. But an
+        # Not an error: config may legitimately drop an entry. But an
         # allowlist entry that no longer exists should be pruned.
-        print(f"note: allowlisted permission not present in settings.json: {entry!r}")
+        print(f"note: allowlisted permission not present in config.toml: {entry!r}")
 
 
 def check_gitignore() -> None:

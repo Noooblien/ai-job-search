@@ -1,0 +1,11 @@
+# Grok Build project config for AI Job Search (this Grok-native fork).
+# Permission allowlist mirrors the old Claude settings.json intent:
+# only pre-approve the shell commands the workflow actually needs.
+
+[permission]
+allow = [
+  "Bash(bun run *)",
+  "Bash(python salary_lookup.py *)",
+  "Bash(python3 salary_lookup.py *)",
+  "Bash(pdftotext *)",
+]

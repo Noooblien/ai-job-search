@@ -4,7 +4,7 @@ description: >
   Assists with job applications: evaluating job postings, tailoring CVs, writing cover letters,
   and preparing for interviews. Triggers on keywords like: job posting, job application, CV,
   cover letter, resume, interview prep, job fit, career, application, apply, ansøgning, stilling
-allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Edit, Write, AskUserQuestion
+allowed-tools: read_file, list_dir, grep, web_fetch, web_search, search_replace, write, ask_user_question
 framework_version: 1.0.1
 ---
 
@@ -17,7 +17,7 @@ framework_version: 1.0.1
 When the user provides a job posting (URL or text), follow this workflow:
 
 ### Step 1: Research & Evaluate Fit
-- Fetch the job posting content (use WebFetch for URLs)
+- Fetch the job posting content (use web_fetch for URLs)
 - Analyze the posting for required competencies, keywords, and priorities
 - Research the company (website, LinkedIn, mission, recent news)
 - Score the posting against the candidate's profile using the framework in `04-job-evaluation.md`

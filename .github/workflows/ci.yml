@@ -13,14 +13,15 @@
 # CI runs typechecks and the checked-in fixture/mock test suites only; live
 # portal testing stays a local, on-demand step.
 #
-# Security posture: this template ships pre-approved Claude Code permissions
-# and CLI code that every fork user executes, so the security-guards job
-# fails PRs that widen settings.json permissions, weaken the personal-data
-# gitignore rules, or add package lifecycle scripts; dependency-review flags
-# newly introduced vulnerable/malicious dependencies. Honest limit: a PR can
-# edit this workflow itself, so these guards catch accidents and casual
-# attempts, not a determined author - branch protection with required checks
-# and human review of workflow/settings diffs remain the real backstop.
+# Security posture: this Grok-native fork ships pre-approved Grok Build
+# permissions (.grok/config.toml) and CLI code that every user executes, so
+# the security-guards job fails PRs that widen the permission allowlist,
+# weaken the personal-data gitignore rules, or add package lifecycle scripts;
+# dependency-review flags newly introduced vulnerable/malicious dependencies.
+# Honest limit: a PR can edit this workflow itself, so these guards catch
+# accidents and casual attempts, not a determined author - branch protection
+# with required checks and human review of workflow/config diffs remain the
+# real backstop.
 # Actions are pinned to commit SHAs; the token is read-only.
 
 name: CI
@@ -197,6 +198,6 @@ jobs:
           check CLAUDE.md '\[YOUR_NAME\]'
           check cv/main_example.tex '\[YOUR_NAME\]'
           check cover_letters/cover_example.tex '\[YOUR NAME\]'
-          check .claude/skills/job-application-assistant/01-candidate-profile.md '<!-- SETUP'
-          check .claude/skills/job-application-assistant/04-job-evaluation.md '\[YOUR_PRIMARY_SKILLS\]'
+          check .grok/skills/job-application-assistant/01-candidate-profile.md '<!-- SETUP'
+          check .grok/skills/job-application-assistant/04-job-evaluation.md '\[YOUR_PRIMARY_SKILLS\]'
           exit $fail

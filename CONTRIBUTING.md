@@ -4,7 +4,7 @@ Thanks for considering a contribution! This repo has a deliberate, narrow philos
 
 ## The one rule everything follows from
 
-**This repo is a universal template.** People fork it and adapt it to their own market, language, and profile. Upstream stays market-agnostic, person-agnostic, and Claude Code-native. The corollary: a contribution is judged by fit to this rule first, execution quality second. Well-built but off-policy still gets declined (kindly, with reasons).
+**This fork is Grok Build–native.** Specs live under `.grok/`. It is based on the [upstream AI Job Search template](https://github.com/MadsLorentzen/ai-job-search) (Claude Code under `.claude/`). Use `python3 tools/check_upstream_updates.py` to compare methodology versions (local `.grok/` ↔ upstream `.claude/`).
 
 ## What gets merged
 
@@ -47,19 +47,11 @@ Market-specific skills are genuinely valuable - they just live in forks, where t
 
 One practical warning: when you open a PR from a fork, GitHub targets this upstream repo by default, not your own - three personalized-fork PRs landed here by accident in a single week ([#155], [#162], [#165]). Check the "base repository" dropdown before publishing.
 
-## Porting to another AI runtime? Forks too
+## This fork vs upstream
 
-Claude Code is the reference runtime: it is what the maintainer runs daily and what every methodology change is verified on. A parallel command tree for another runtime (Codex, Antigravity, Gemini CLI, ...) would ship untested on every change - CI cannot run those harnesses - and each accepted runtime makes the next one harder to refuse. It is the same arithmetic that keeps market-specific portals in forks.
-
-What upstream maintains for other runtimes instead:
-
-- The portal search skills in `.agents/skills/` use the portable Agent Skills format (`SKILL.md` per portal) and are auto-discovered by Codex and Antigravity today.
-- The root `AGENTS.md` points any agent at the canonical workflow specs and the profile entry point.
-- Framework instruction files carry `framework_version` markers, so a runtime fork can track methodology changes precisely (`python3 tools/check_upstream_updates.py`).
-
-Announce your runtime fork in the pinned [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78) discussion and it gets listed alongside the market adaptations. The proven shape is a thin pointer: reference the specs here instead of copying them, so upstream improvements reach your fork on rebase.
-
-This is a decision, not a dogma: if cross-runtime standards mature to the point where these specs run unmodified elsewhere, or the community's center of gravity moves to runtime forks, the trade-off gets re-evaluated. Background: the architecture thread in [Community forks & adaptations](https://github.com/MadsLorentzen/ai-job-search/discussions/78).
+- **This repo:** Grok Build is the runtime; workflow SSOT is `.grok/`.
+- **Upstream:** Claude Code under `.claude/`; prefer upstream PRs for harness-agnostic methodology.
+- **Portals:** `.agents/skills/` stay portable across agents.
 
 ## Practical notes
 

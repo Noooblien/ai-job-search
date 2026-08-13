@@ -26,7 +26,7 @@ After writing the cover letter and before presenting to the user, always compile
 
 1. Run `xelatex -interaction=nonstopmode cover_<company>_<role>.tex`
 2. Confirm page count is exactly 1 and compile succeeded
-3. Read the PDF via the Read tool and visually check: signature fits at the bottom, no text cut off, bullet font matches body
+3. Read the PDF via `read_file` and visually check: signature fits at the bottom, no text cut off, bullet font matches body
 
 ### Known template pitfall: itemize inside `\lettercontent{}`
 

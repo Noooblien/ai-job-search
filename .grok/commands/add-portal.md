@@ -31,7 +31,7 @@ Ask the user (skip anything already answered by `$ARGUMENTS`):
 
 ## Step 2: Investigate the Portal
 
-Do reconnaissance before writing any code. Use WebFetch (or `curl` via Bash) on the portal:
+Do reconnaissance before writing any code. Use web_fetch (or `curl` via Bash) on the portal:
 
 1. **Find the search URL pattern.** Load the portal's search page, run a search in the URL bar mentally or via fetch, and identify: the search endpoint, the query parameter, and any parameters for location, posting age, and pagination. Prefer a JSON API if one backs the site (check for `/api/` XHR endpoints in the page source); otherwise plan to parse the HTML results page.
 2. **Fetch one search-results response** for the test query and identify the per-result fields: **id, title, company, location, posting date, and URL**. For HTML, note the class names / attributes that anchor each field. For JSON, note the field paths.
@@ -120,7 +120,7 @@ Do not proceed to Step 5 until search, detail, and tests all pass.
 
 1. Ask whether the user wants the new portal added to their `/scrape` search strategy. If yes:
    - The portal CLI itself is already picked up automatically by `/scrape` (it discovers `.agents/skills/*/SKILL.md`) — no further wiring is needed for CLI search/detail.
-   - Optionally add WebSearch/`site:` placeholder queries for that board in `.claude/skills/job-scraper/search-queries.md` (use the `[YOUR_JOB_BOARD]` style placeholders already there) so the fallback path still covers the board if the CLI is unavailable.
+   - Optionally add web_search/`site:` placeholder queries for that board in `.grok/skills/job-scraper/search-queries.md` (use the `[YOUR_JOB_BOARD]` style placeholders already there) so the fallback path still covers the board if the CLI is unavailable.
 2. Remind the user to add the install line for their own records if they maintain a fork README:
    ```bash
    cd .agents/skills/<name>/cli && bun install && cd ../../../..

@@ -10,8 +10,8 @@ Follow these steps **exactly in order**. Do not skip steps.
 
 Read these two files in parallel before doing anything else. You must know what is already there so you do not propose duplicates.
 
-- `.claude/skills/job-application-assistant/01-candidate-profile.md`
-- `.claude/skills/job-application-assistant/02-behavioral-profile.md`
+- `.grok/skills/job-application-assistant/01-candidate-profile.md`
+- `.grok/skills/job-application-assistant/02-behavioral-profile.md`
 
 Hold this content in context throughout the command. Do not re-read these files later.
 
@@ -51,7 +51,7 @@ Read all files in `documents/references/`. Extract:
 ### 1e. GitHub Profile
 Look up the GitHub username from `01-candidate-profile.md`. If a GitHub URL or username is present:
 
-1. Use WebFetch or WebSearch to retrieve the public profile and pinned repositories
+1. Use web_fetch or web_search to retrieve the public profile and pinned repositories
 2. For each repository found:
    - Fetch the repository README
    - Note: name, description, primary language(s), topics/tags, any frameworks or libraries mentioned in the README

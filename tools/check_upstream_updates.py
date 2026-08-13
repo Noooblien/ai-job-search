@@ -7,7 +7,7 @@ This script:
 1. Identifies the upstream remote (defaults to 'upstream', falls back to 'origin').
 2. Fetches the latest commits from the upstream remote.
 3. Compares the 'framework_version' in your local files under
-   .claude/skills/job-application-assistant/ with those in the upstream remote.
+   .grok/skills/job-application-assistant/ with those in the upstream remote.
 4. Alerts you if a file has been updated upstream with a newer version.
 """
 
@@ -20,16 +20,43 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-FRAMEWORK_FILES = [
-    ".claude/skills/job-application-assistant/01-candidate-profile.md",
-    ".claude/skills/job-application-assistant/02-behavioral-profile.md",
-    ".claude/skills/job-application-assistant/03-writing-style.md",
-    ".claude/skills/job-application-assistant/04-job-evaluation.md",
-    ".claude/skills/job-application-assistant/05-cv-templates.md",
-    ".claude/skills/job-application-assistant/06-cover-letter-templates.md",
-    ".claude/skills/job-application-assistant/07-interview-prep.md",
-    ".claude/skills/job-application-assistant/SKILL.md",
-    "AGENTS.md",
+
+# Local (this Grok-native fork) path → upstream (Claude Code template) path.
+# Upstream still keeps methodology under .claude/; we live under .grok/.
+FRAMEWORK_FILES: list[tuple[str, str]] = [
+    (
+        ".grok/skills/job-application-assistant/01-candidate-profile.md",
+        ".claude/skills/job-application-assistant/01-candidate-profile.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/02-behavioral-profile.md",
+        ".claude/skills/job-application-assistant/02-behavioral-profile.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/03-writing-style.md",
+        ".claude/skills/job-application-assistant/03-writing-style.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/04-job-evaluation.md",
+        ".claude/skills/job-application-assistant/04-job-evaluation.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/05-cv-templates.md",
+        ".claude/skills/job-application-assistant/05-cv-templates.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/06-cover-letter-templates.md",
+        ".claude/skills/job-application-assistant/06-cover-letter-templates.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/07-interview-prep.md",
+        ".claude/skills/job-application-assistant/07-interview-prep.md",
+    ),
+    (
+        ".grok/skills/job-application-assistant/SKILL.md",
+        ".claude/skills/job-application-assistant/SKILL.md",
+    ),
+    ("AGENTS.md", "AGENTS.md"),
 ]
 
 def run_git(args: list[str]) -> tuple[int, str, str]:
@@ -94,36 +121,37 @@ def main() -> int:
     updates_available = []
     errors = []
 
-    for rel_path in FRAMEWORK_FILES:
-        local_path = ROOT / rel_path
+    for local_rel, upstream_rel in FRAMEWORK_FILES:
+        local_path = ROOT / local_rel
         if not local_path.exists():
-            print(f"Local file missing: {rel_path}")
+            print(f"Local file missing: {local_rel}")
             continue
 
         # Get local version
         local_text = local_path.read_text(encoding="utf-8")
         local_ver = get_framework_version_from_text(local_text)
-        
-        # Get upstream version
-        rc, upstream_text, _ = run_git(["show", f"{ref}:{rel_path}"])
+
+        # Get upstream version (upstream path may still be under .claude/)
+        rc, upstream_text, _ = run_git(["show", f"{ref}:{upstream_rel}"])
         if rc != 0:
             # File might not exist upstream yet
             continue
-            
+
         upstream_ver = get_framework_version_from_text(upstream_text)
-        
+
         if not local_ver:
-            errors.append(f"Local file {rel_path} is missing 'framework_version' in frontmatter.")
+            errors.append(f"Local file {local_rel} is missing 'framework_version' in frontmatter.")
             continue
         if not upstream_ver:
             continue
-            
+
         if parse_semver(upstream_ver) > parse_semver(local_ver):
             updates_available.append({
-                "filename": Path(rel_path).name,
+                "filename": Path(local_rel).name,
                 "local": local_ver,
                 "upstream": upstream_ver,
-                "path": rel_path
+                "path": local_rel,
+                "upstream_path": upstream_rel,
             })
 
 
@@ -137,7 +165,9 @@ def main() -> int:
         print("[UPDATE] Upstream updates available for framework methodology files:")
         for up in updates_available:
             print(f"  - {up['filename']}: local {up['local']} < upstream {up['upstream']}")
-            print(f"    Diff command: git diff {ref} -- {up['path']}")
+            print(
+                f"    Diff command: git diff {ref}:{up['upstream_path']} -- {up['path']}"
+            )
             print()
         print("Review these changes to see if they fit your personalized fork!")
         return 0

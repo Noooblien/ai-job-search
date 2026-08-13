@@ -115,12 +115,15 @@ When the role sits outside your home domain, **lead with the domain-transfer arg
 
 **Create 2-3 profile statement templates for your main role types:**
 
-<!-- SETUP: These are populated based on your background -->
-**For [YOUR_PRIMARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_1]
+<!-- SETUP: Populated from Rahul Singh Maraskole CV -->
+**For Protocol / Lead Blockchain Engineer roles:**
+> Senior Lead Protocol Engineer and full-stack blockchain architect with 7+ years shipping production L1/L2 infrastructure, shared sequencing, data availability, and cross-chain settlement. Architected systems processing 50,000+ daily transactions and multi-chain indexing across 100+ networks at 99.9% uptime. Combines Cosmos SDK, EVM, and zk-oriented design with Golang/Rust/Solidity delivery and hands-on technical leadership of small protocol teams.
 
-**For [YOUR_SECONDARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_2]
+**For Infrastructure / Platform / Multi-chain roles:**
+> Protocol and infrastructure engineer specializing in multi-chain node operations, high-availability RPC, validators, and high-throughput indexing. Delivered production indexing across 100+ EVM networks with sub-200ms query latency and monitoring systems that cut incident response time by ~40%. Strong production ownership from chain config and upgrades through settlement cost and finality optimizations.
+
+**For AI × Crypto / Agent infrastructure roles:**
+> Blockchain systems engineer building trustless infrastructure for autonomous agents and decentralized compute — including on-chain authorization receipts, WASM compute meshes, AI model governance, and cross-chain autonomous settlement agents. Background in modular blockchain stacks plus practical agentic tooling (terminal copilots, automated debugging) using Grok Build and related LLM tooling where relevant.
 
 Statements labeled *[Used for: <company>_<role>]* were extracted from archived application drafts by `/setup` Path A. They are **phrasing references, never fact sources**: when drafting from one, every factual claim still comes from `01-candidate-profile.md` - a past tailored draft does not vouch for its own accuracy.
 
@@ -169,7 +172,7 @@ After writing the CV and before presenting to the user, always compile and visua
 
 1. Run `lualatex -interaction=nonstopmode main_<company>_<role>.tex`
 2. Check the output page count: must be exactly 2
-3. Read the PDF via the Read tool and visually inspect both pages
+3. Read the PDF via `read_file` and visually inspect both pages
 4. Check for **orphaned entries**: a `\cventry` title line must never sit alone at the bottom of page 1 with its bullets on page 2
 
 ### Fixing common page-break problems

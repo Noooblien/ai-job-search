@@ -1,18 +1,12 @@
-%% Example CV - [YOUR_NAME]
-%% Comprehensive overview of all competencies, experience, and achievements.
+%% Master CV - Rahul Singh Maraskole
+%% Comprehensive overview of competencies, experience, and projects.
 %% Use as a master reference when tailoring role-specific CVs.
-%%
-%% SETUP: Run /setup to populate this with your actual information.
 %% Compile with: lualatex main_example.tex
-%% (pdflatex often fails on modern MiKTeX with fontawesome5 font-expansion errors.)
 
 \documentclass[11pt,a4paper,sans]{moderncv}
 \moderncvstyle{banking}
 \moderncvcolor{blue}
 
-% Force both first and last name AND section headings to render in moderncv
-% blue (color1). Default banking on lualatex+MiKTeX leaves these black, which
-% looks inconsistent with the rest of the blue accent scheme.
 \renewcommand*{\firstnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
 \renewcommand*{\lastnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
 \renewcommand*{\sectionstyle}[1]{{\sectionfont\color{color1}#1}}
@@ -24,141 +18,99 @@
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
-    pdftitle={[YOUR_NAME] - CV},
+    pdftitle={Rahul Singh Maraskole - CV},
     pdfpagemode=FullScreen,
 }
 \usepackage[scale=0.80]{geometry}
 \usepackage{import}
+\usepackage{needspace}
 
-% personal data
-\name{[First]}{[Last]}
-\address{[Your Address, City, Country]}{}{}
-\phone[mobile]{[+XX XXXXXXXXXX]}
-\email{[your.email@example.com]}
-\extrainfo{\href{[https://linkedin.com/in/your-profile]}{LinkedIn}, \href{[https://github.com/your-username]}{GitHub}}
+\name{Rahul Singh}{Maraskole}
+\address{India (Remote)}{}{}
+\phone[mobile]{+91 9630489090}
+\email{rsm050501@gmail.com}
+\extrainfo{\href{https://github.com/Noooblien}{GitHub}}
 
 \begin{document}
 
 \makecvtitle
 
-% ============================================================
-%     PROFILE STATEMENT
-% ============================================================
-
 \vspace{6pt}
-\small{[Write a 3-5 line profile statement tailored to the role you're applying for. Focus on what makes you uniquely qualified. Example: "Data scientist with a PhD in [field] and X years of industry experience. Combines deep domain expertise in [domain] with strong applied machine learning and Python development skills. Experienced in developing end-to-end ML pipelines, from data ingestion to stakeholder-facing dashboards."]}
-
-% ============================================================
-%     CORE COMPETENCIES
-% ============================================================
+\small{Senior Lead Protocol Engineer and full-stack blockchain architect with 7+ years shipping production L1/L2 infrastructure, shared sequencing, data availability, cross-chain settlement, and multi-network indexing. Architected systems processing 50{,}000+ daily transactions and indexing across 100+ networks at 99.9\% uptime. Combines Cosmos SDK, EVM, and zk-oriented design with Golang, Rust, and Solidity delivery, plus technical leadership of protocol teams.}
 
 \section{Core Competencies}
 \vspace{1pt}
 \begin{itemize}
-
-\item \textbf{[Skill Category 1]}: [Specific skills, frameworks, tools. Be concrete.]
-
-\item \textbf{[Skill Category 2]}: [Specific skills, frameworks, tools.]
-
-\item \textbf{[Skill Category 3]}: [Specific skills, frameworks, tools.]
-
-\item \textbf{[Skill Category 4]}: [Domain expertise, methods, approaches.]
-
-\item \textbf{[Skill Category 5]}: [Tools, platforms, software.]
-
+\item \textbf{Blockchain architecture}: Rollups, shared sequencers, DA layers, Cosmos SDK, Ethermint, EVM, IBC, Hyperledger Fabric/Besu, Canton Network, DAML
+\item \textbf{Smart contracts}: Solidity, EVM systems, DeFi primitives, upgradeable proxies, multicall architectures
+\item \textbf{Infrastructure}: Multi-chain nodes, HA RPC, validators, chain monitoring, 100+ network deployments
+\item \textbf{Programming}: Golang, Rust, TypeScript, JavaScript, Solidity, Python
+\item \textbf{Leadership}: Technical leadership, protocol architecture, security reviews, roadmap execution
 \end{itemize}
-
-% ============================================================
-%     PROFESSIONAL EXPERIENCE
-% ============================================================
 
 \section{Professional Experience}
 \vspace{3pt}
 \begin{itemize}
 
-% --- Most Recent Role ---
-\item{\cventry{[YYYY--Present]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\needspace{5\baselineskip}
+\item{\cventry{Oct 2022--Present}{Senior Lead Protocol Engineer}{Airchains}{Remote}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1 - be specific, use numbers where possible]
-    \item [Achievement or responsibility 2]
-    \item [Achievement or responsibility 3]
-    \item [Achievement or responsibility 4]
+    \item Architected end-to-end blockchain infrastructure processing 50{,}000+ daily transactions, bridging EVM execution with Cosmos-based settlement --- reducing cross-chain finality latency by $\sim$35\%
+    \item Designed and shipped a custom Cosmos SDK chain with native settlement, enabling trustless L2-to-L1 state transitions without centralized bridges
+    \item Built a shared sequencer for multiple app-chains with atomic cross-rollup composability and MEV-fair ordering
+    \item Integrated hybrid execution (Hyperledger Fabric, Hyperledger Besu) with zk-based verification for enterprise privacy and auditability
+    \item Developed a modular Data Availability layer decoupling DA from settlement for L2 throughput scalability
+    \item Delivered a batch proving pipeline aggregating 500+ transactions per on-chain submission, cutting settlement costs by $\sim$30\%
+    \item Deployed high-throughput indexing across 100+ networks at 99.9\% uptime and sub-200ms query latency
+    \item Led 4 engineers across 3 major protocol versions --- architecture, security hardening, interoperability upgrades
 \end{itemize}}}
 
 \vspace{3pt}
 
-% --- Previous Role ---
-\item{\cventry{[YYYY--YYYY]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\needspace{5\baselineskip}
+\item{\cventry{Oct 2022--Present}{Director}{Retcons Technology}{India}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1]
-    \item [Achievement or responsibility 2]
-    \item [Achievement or responsibility 3]
+    \item Concurrent leadership role alongside Airchains protocol work
 \end{itemize}}}
 
 \vspace{3pt}
 
-% --- Earlier Role ---
-\item{\cventry{[YYYY--YYYY]}{[Job Title]}{[Company]}{[City, Country]}{}{\vspace{1pt}
+\needspace{5\baselineskip}
+\item{\cventry{Feb 2019--Sept 2022}{Lead Blockchain Developer}{Retcons Technology}{India}{}{\vspace{1pt}
 \begin{itemize}
-    \item [Achievement or responsibility 1]
-    \item [Achievement or responsibility 2]
+    \item Shipped production DApps on Ethereum, BSC, Base, and Polygon --- contracts through mainnet and backend integration
+    \item Built permissioned networks with Hyperledger Fabric and Besu (chaincode, peers/orderers, private transactions)
+    \item Designed multi-chain node infrastructure with HA RPC endpoints and consistent sync across heterogeneous environments
+    \item Operated validator and full-node setups; monitoring cut incident response time by $\sim$40\%
+    \item Implemented on-chain verifier contracts for trustless validation of off-chain computations across EVM chains
 \end{itemize}}}
 
 \end{itemize}
 
-% ============================================================
-%     EDUCATION
-% ============================================================
+\section{Selected Projects}
+\vspace{1pt}
+\begin{itemize}
+\item \textbf{Decentralized Shared Sequencer} (Go, MEV): Multi-app-chain atomic inclusion and fair ordering
+\item \textbf{Cosmos ZK-Settlement Chain} (Cosmos SDK, IBC): zk-verifiable permissioned execution with Fabric privacy
+\item \textbf{Modular DA Layer} (Golang): Pluggable DA backends for independent throughput scaling
+\item \textbf{Multi-Chain Indexer} (Rust, EVM): 100+ networks, sub-200ms queries, historical state reconstruction
+\item \textbf{Trustless AI agent / compute research}: On-chain agent authorization, WASM compute mesh, model governance, cross-chain settlement agents
+\item \textbf{Agentic tooling}: Ghost Terminal, Kernel, BugHunter (autonomous coding and debugging systems)
+\end{itemize}
 
 \section{Education}
 \vspace{1pt}
 \begin{itemize}
-
-\item{\cventry{[YYYY--YYYY]}{[Degree] in [Field]}{[Institution]}{[City, Country]}{}{\vspace{1pt}
-Thesis: ``[Thesis Title].'' [Brief description of research focus.]
+\item{\cventry{2018--2022}{B.Tech in Computer Science \& Engineering}{Rungta College of Engineering \& Technology}{India}{}{\vspace{1pt}
+Specialized in Distributed Systems and Algorithmic Complexity.
 }}
-
-\vspace{3pt}
-
-\item{\cventry{[YYYY--YYYY]}{[Degree] in [Field]}{[Institution]}{[City, Country]}{}{\vspace{1pt}
-[Brief description or key topics.]
-}}
-
 \end{itemize}
-
-% ============================================================
-%     LANGUAGES
-% ============================================================
 
 \section{Languages}
 \vspace{1pt}
 \begin{itemize}
-\item [Language 1] (native), [Language 2] (fluent), [Language 3] (intermediate).
+\item English (professional working proficiency)
 \end{itemize}
-
-% ============================================================
-%     PUBLICATIONS (optional)
-% ============================================================
-
-\section{Publications}
-\vspace{1pt}
-\begin{itemize}
-\item [Author(s)] ([Year]). [Title]. [Journal/Conference]. \href{[DOI_URL]}{DOI link}
-\end{itemize}
-
-% ============================================================
-%     HONORS AND AWARDS (optional)
-% ============================================================
-
-\section{Honors and Awards}
-\vspace{1pt}
-\begin{itemize}
-\item{\textbf{[Award Name]} -- [Event/Organization] ([Year]).}
-\end{itemize}
-
-% ============================================================
-%     REFERENCES
-% ============================================================
 
 \section{References}
 \vspace{1pt}

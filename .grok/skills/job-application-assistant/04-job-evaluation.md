@@ -44,9 +44,9 @@ How well do the required/preferred skills align with the candidate's capabilitie
 | 40-59 | Partial match, significant upskilling needed |
 | 0-39 | Fundamental mismatch |
 
-**Strong match areas:** [YOUR_PRIMARY_SKILLS]
-**Moderate match areas:** [YOUR_SECONDARY_SKILLS]
-**Weak match areas:** [SKILLS_YOU_LACK]
+**Strong match areas:** Blockchain protocol engineering (L1/L2, rollups, shared sequencers, DA layers), Cosmos SDK / EVM / IBC, smart contracts (Solidity), multi-chain infrastructure, high-throughput indexing, Golang/Rust production systems, technical leadership of protocol teams
+**Moderate match areas:** Enterprise permissioned chains (Hyperledger Fabric/Besu), DeFi product engineering, TypeScript full-stack DApps, zk-verifiable execution, AI×crypto agent infrastructure (research + systems)
+**Weak match areas:** Pure frontend design, traditional mobile apps, non-crypto enterprise SaaS without systems depth, formal academic research publications
 
 ### 2. Experience Match (0-100)
 Does work history align with what they're looking for?
@@ -58,9 +58,9 @@ Does work history align with what they're looking for?
 | 40-59 | Adjacent experience, would need to make the case |
 | 0-39 | Unrelated experience |
 
-**Strong:** [YOUR_DIRECT_EXPERIENCE_DOMAINS]
-**Moderate:** [YOUR_ADJACENT_EXPERIENCE]
-**Entry-level:** [ROLES_WITH_LIMITED_EXPERIENCE]
+**Strong:** Protocol / lead blockchain engineering; modular L2 stacks; cross-chain settlement; production multi-network infra (100+ chains); team lead on protocol versions
+**Moderate:** Enterprise blockchain (Fabric/Besu); DApp product delivery; validator/ops; AI agent / decentralized compute R&D
+**Entry-level:** Pure product management without engineering; non-technical consulting
 
 ### 3. Behavioral/Culture Fit (0-100)
 Does the role and company culture match the behavioral profile?
@@ -75,10 +75,10 @@ Does the role and company culture match the behavioral profile?
 **Red flags to research:** Department disorganization, work dominated by maintenance over development, poor chemistry with leadership, culture mismatches. Check reviews, media coverage, LinkedIn connections, and network contacts for insider perspective.
 
 ### 4. Location & Logistics (Pass/Fail + Notes)
-- Within commute range: PASS
-- Remote with occasional office: PASS
-- Requires relocation: FAIL (deal-breaker)
-- Frequent international travel: FLAG (discuss with user)
+- Remote (India-based candidate, CV states India Remote): PASS
+- Hybrid/onsite in India if feasible: PASS (confirm with user)
+- Requires relocation outside India without remote option: FAIL unless user opts in
+- Visa sponsorship / local work rights required (US/EU/etc.): FLAG — eligibility not on CV; ask user before applying
 
 ### 5. Career Alignment & Motivation (0-100)
 Does this role advance career goals and contain tasks that energize?
@@ -91,19 +91,19 @@ Does this role advance career goals and contain tasks that energize?
 | 0-39 | Dead end or backwards step |
 
 **Career goals:**
-- [YOUR_CAREER_GOAL_1]
-- [YOUR_CAREER_GOAL_2]
-- [YOUR_CAREER_GOAL_3]
+- Lead protocol / platform engineering for production L1/L2 or modular blockchain stacks
+- Build trustless infrastructure at the intersection of AI agents and decentralized compute
+- Keep hands-on architecture ownership while growing technical leadership scope
 
 **Motivation filter:** Evaluate not just whether you *can* do the tasks, but whether the tasks will *energize* you. Consider:
-- Tasks that energize: [YOUR_ENERGIZING_TASKS]
-- Tasks that drain: [YOUR_DRAINING_TASKS]
-- Non-task factors: leadership style, department culture, company values, degree of autonomy
+- Tasks that energize: protocol design, shared sequencing/MEV fairness, DA/settlement layers, multi-chain indexing, zk/trustless verification, shipping production systems with hard metrics
+- Tasks that drain: pure maintenance tickets, low-ownership feature factories, non-technical role drift
+- Non-task factors: autonomy, technical depth, remote flexibility, team quality
 
 **Life situation alignment:** Consider personal constraints:
-- **Security**: [YOUR_FINANCIAL_SITUATION_CONTEXT]
-- **Flexibility**: [YOUR_SCHEDULE_CONSTRAINTS]
-- **Professional development**: [YOUR_GROWTH_PRIORITIES]
+- **Security**: Senior IC / lead compensation expected (not quantified on CV)
+- **Flexibility**: Remote-first preferred (India Remote on CV)
+- **Professional development**: Stay at protocol/infra frontier; avoid pure legacy CRUD
 
 ### 6. Salary Benchmark (Optional)
 
