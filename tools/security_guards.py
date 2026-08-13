@@ -69,6 +69,8 @@ ALLOWED_PERMISSIONS = {
     "Bash(bun run *)",
     "Bash(python salary_lookup.py *)",
     "Bash(python3 salary_lookup.py *)",
+    "Bash(python tools/tracker_ui.py *)",
+    "Bash(python3 tools/tracker_ui.py *)",
     "Bash(pdftotext *)",
 }
 

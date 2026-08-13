@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Tracker</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --bg-elev: #121820;
+      --bg-row: #161d26;
+      --line: #243040;
+      --ink: #e8eef6;
+      --muted: #8b9bb0;
+      --accent: #6ea8ff;
+      --ok: #3dd68c;
+      --warn: #f0b429;
+      --bad: #f07178;
+      --offer: #c4a5ff;
+      --chip: #1c2733;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #152036 0%, var(--bg) 55%);
+      color: var(--ink);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; flex-direction: column; gap: 4px; }
+    .brand h1 { margin: 0; font-size: 18px; letter-spacing: 0.02em; }
+    .brand p { margin: 0; color: var(--muted); font-size: 12px; }
+    .notice {
+      max-width: 420px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      padding: 16px 24px;
+    }
+    .stat {
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .stat b { display: block; font-size: 22px; }
+    .stat span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 0 24px 12px;
+    }
+    .tabs { display: flex; gap: 6px; }
+    button, select, input {
+      font: inherit;
+      color: var(--ink);
+      background: var(--chip);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    button { cursor: pointer; padding: 7px 12px; }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: #1b3a63; border-color: #2d5d99; }
+    button.danger { background: #3a1d24; border-color: #6b3038; }
+    button.ghost { background: transparent; }
+    button.active { background: #1b3a63; border-color: var(--accent); }
+    input[type="search"] { min-width: 240px; padding: 7px 10px; flex: 1; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 0;
+      height: calc(100vh - 220px);
+      min-height: 420px;
+      border-top: 1px solid var(--line);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; position: sticky; top: 0; background: #0f151c; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover, tbody tr.selected { background: var(--bg-row); }
+    .list { overflow: auto; }
+    .empty { padding: 48px 24px; color: var(--muted); }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--chip);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    .pill.new, .pill.active { color: var(--accent); }
+    .pill.ranked, .pill.interview { color: var(--warn); }
+    .pill.applied, .pill.hired, .pill.ok { color: var(--ok); }
+    .pill.skipped, .pill.expired, .pill.closed { color: var(--bad); }
+    .pill.offer { color: var(--offer); }
+    .muted { color: var(--muted); }
+    .detail {
+      border-left: 1px solid var(--line);
+      background: var(--bg-elev);
+      overflow: auto;
+      padding: 18px 18px 28px;
+    }
+    .detail h2 { margin: 0 0 4px; font-size: 16px; }
+    .detail .meta { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      resize: vertical;
+    }
+    label { display: block; color: var(--muted); font-size: 11px; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+    footer {
+      padding: 10px 24px 16px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .score { font-variant-numeric: tabular-nums; font-weight: 650; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .detail { border-left: 0; border-top: 1px solid var(--line); min-height: 280px; }
+      .notice { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Job Tracker</h1>
+      <p id="workspace">Local cockpit · 127.0.0.1</p>
+    </div>
+    <p class="notice">Never auto-applies. Status changes stay in this repo. Open the posting yourself to submit.</p>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <div class="toolbar">
+    <div class="tabs" id="tabs">
+      <button data-tab="inbox" class="active">Inbox</button>
+      <button data-tab="pipeline">Pipeline</button>
+      <button data-tab="skipped">Skipped</button>
+      <button data-tab="all">All scraped</button>
+    </div>
+    <input type="search" id="q" placeholder="Filter company, role, location, portal">
+    <select id="portal">
+      <option value="">All portals</option>
+    </select>
+  </div>
+
+  <div class="layout">
+    <div class="list">
+      <table>
+        <thead id="head"></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>Nothing here yet. Run /scrape, then refresh.</div>
+    </div>
+    <aside class="detail" id="detail">
+      <p class="muted">Select a row.</p>
+    </aside>
+  </div>
+  <footer>Local files only · job_scraper/seen_jobs.json · job_search_tracker.csv · Grok Build</footer>
+
+  <script>
+    const state = { data: null, tab: "inbox", selected: null, q: "", portal: "" };
+
+    const $ = (id) => document.getElementById(id);
+
+    async function api(path, body) {
+      const opts = body
+        ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+        : { method: "GET" };
+      const res = await fetch(path, opts);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      return data;
+    }
+
+    function esc(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function pill(status) {
+      const cls = String(status || "").toLowerCase().replace(/[\s_]+/g, "-");
+      return `<span class="pill ${esc(cls)}">${esc(status || "—")}</span>`;
+    }
+
+    function applySnapshot(data) {
+      state.data = data;
+      $("workspace").textContent = `${data.workspace} · localhost tracker`;
+      render();
+    }
+
+    function statsHtml(s) {
+      const cards = [
+        ["Open inbox", s.inbox_open],
+        ["Ranked", s.inbox_ranked],
+        ["Skipped", s.inbox_skipped],
+        ["Pipeline", s.pipeline_total],
+        ["Interview", s.pipeline_interview],
+        ["Hired", s.pipeline_hired],
+      ];
+      return cards.map(([label, n]) => `<div class="stat"><b>${n}</b><span>${label}</span></div>`).join("");
+    }
+
+    function visibleJobs() {
+      const jobs = state.data.jobs || [];
+      const q = state.q.trim().toLowerCase();
+      return jobs.filter((job) => {
+        if (state.tab === "inbox" && !["new", "ranked", "evaluated"].includes(job.status)) return false;
+        if (state.tab === "skipped" && job.status !== "skipped") return false;
+        if (state.tab === "pipeline") return false;
+        if (state.portal && job.portal !== state.portal) return false;
+        if (!q) return true;
+        const blob = `${job.company} ${job.title} ${job.location} ${job.portal}`.toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
+    function visibleApps() {
+      const rows = state.data.applications || [];
+      const q = state.q.trim().toLowerCase();
+      return rows.filter((row) => {
+        if (!q) return true;
+        const blob = `${row.company} ${row.role} ${row.sector} ${row.status} ${row.notes}`.toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
+    function render() {
+      if (!state.data) return;
+      $("stats").innerHTML = statsHtml(state.data.stats);
+      const portals = [...new Set((state.data.jobs || []).map((j) => j.portal).filter(Boolean))].sort();
+      const portalEl = $("portal");
+      const current = state.portal;
+      portalEl.innerHTML = `<option value="">All portals</option>` + portals.map((p) =>
+        `<option ${p === current ? "selected" : ""} value="${esc(p)}">${esc(p)}</option>`
+      ).join("");
+
+      const pipeline = state.tab === "pipeline";
+      $("head").innerHTML = pipeline
+        ? `<tr><th>Date</th><th>Company</th><th>Role</th><th>Status</th><th>Fit</th></tr>`
+        : `<tr><th>Seen</th><th>Company</th><th>Role</th><th>Location</th><th>Score</th><th>Status</th></tr>`;
+
+      const rows = pipeline ? visibleApps() : visibleJobs();
+      $("empty").hidden = rows.length > 0;
+      if (pipeline) {
+        $("rows").innerHTML = rows.map((row, i) => {
+          const id = `app-${i}`;
+          const selected = state.selected && state.selected.kind === "app" && state.selected.i === i;
+          return `<tr data-kind="app" data-i="${i}" class="${selected ? "selected" : ""}">
+            <td class="muted">${esc(row.date || "—")}</td>
+            <td>${esc(row.company)}</td>
+            <td>${esc(row.role)}</td>
+            <td>${pill(row.status)}</td>
+            <td class="score">${esc(row.fit_rating || "—")}</td>
+          </tr>`;
+        }).join("");
+      } else {
+        $("rows").innerHTML = rows.map((job) => {
+          const selected = state.selected && state.selected.kind === "job" && state.selected.key === job.key;
+          const score = job.rank_score == null ? (job.fit || "—") : Math.round(job.rank_score);
+          return `<tr data-kind="job" data-key="${esc(job.key)}" class="${selected ? "selected" : ""}">
+            <td class="muted">${esc(job.first_seen || "—")}</td>
+            <td>${esc(job.company)}</td>
+            <td>${esc(job.title)}</td>
+            <td class="muted">${esc(job.location || "—")}</td>
+            <td class="score">${esc(score)}</td>
+            <td>${pill(job.status)}</td>
+          </tr>`;
+        }).join("");
+      }
+      renderDetail();
+    }
+
+    function jobByKey(key) {
+      return (state.data.jobs || []).find((j) => j.key === key);
+    }
+
+    function renderDetail() {
+      const el = $("detail");
+      if (!state.selected) {
+        el.innerHTML = `<p class="muted">Select a row.</p>`;
+        return;
+      }
+      if (state.selected.kind === "job") {
+        const job = jobByKey(state.selected.key);
+        if (!job) { el.innerHTML = `<p class="muted">Select a row.</p>`; return; }
+        const score = job.rank_score == null ? "" : `<div>Rank score <b>${esc(Math.round(job.rank_score))}</b> ${esc(job.rank_verdict)}</div>`;
+        el.innerHTML = `
+          <h2>${esc(job.title)}</h2>
+          <div class="meta">${esc(job.company)} · ${esc(job.location || "Location n/a")}<br>${esc(job.portal || "portal n/a")} · first seen ${esc(job.first_seen || "—")}</div>
+          ${pill(job.status)} ${job.fit ? pill(job.fit) : ""}
+          ${score}
+          <div class="actions">
+            <a href="${esc(job.url)}" target="_blank" rel="noopener noreferrer"><button class="primary">Open posting</button></a>
+            ${job.status === "skipped"
+              ? `<button data-act="restore">Restore to inbox</button>`
+              : `<button class="danger" data-act="skip">Skip</button>`}
+            ${job.tracked ? "" : `<button class="primary" data-act="applied">I applied</button>`}
+          </div>
+          <label>Note (saved with “I applied”)</label>
+          <textarea id="note" placeholder="Optional — stays local"></textarea>
+          <p class="muted">Marking applied writes a tracker row. It does not send anything to LinkedIn or any ATS.</p>
+        `;
+        el.querySelector("[data-act='skip']")?.addEventListener("click", () => mutateInbox(job.key, "skipped"));
+        el.querySelector("[data-act='restore']")?.addEventListener("click", () => mutateInbox(job.key, "new"));
+        el.querySelector("[data-act='applied']")?.addEventListener("click", () => markApplied(job.key));
+        return;
+      }
+      const row = visibleApps()[state.selected.i];
+      if (!row) { el.innerHTML = `<p class="muted">Select a row.</p>`; return; }
+      const fileLink = (path, label) => path
+        ? `<a href="/files/${encodeURI(path)}" target="_blank" rel="noopener">${esc(label)}</a>`
+        : `<span class="muted">${esc(label)} n/a</span>`;
+      el.innerHTML = `
+        <h2>${esc(row.role)}</h2>
+        <div class="meta">${esc(row.company)} · ${esc(row.date || "—")} · ${esc(row.channel || "—")}</div>
+        ${pill(row.status)}
+        <label>Pipeline status</label>
+        <select id="app-status">
+          ${["applied","interview","offer","hired","rejected","no_response","withdrawn","offer_declined","interview_only"].map((s) =>
+            `<option ${s === row.status ? "selected" : ""} value="${s}">${s}</option>`).join("")}
+        </select>
+        <label>Add note</label>
+        <textarea id="note" placeholder="Optional update"></textarea>
+        <div class="actions">
+          ${row.source ? `<a href="${esc(row.source)}" target="_blank" rel="noopener noreferrer"><button class="primary">Open posting</button></a>` : ""}
+          <button class="primary" data-act="save">Save status</button>
+        </div>
+        <p>${fileLink(row.cv_file, "CV")} · ${fileLink(row.cover_letter_file, "Cover letter")}</p>
+        <p class="muted">${esc(row.notes || "No notes yet.")}</p>
+      `;
+      el.querySelector("[data-act='save']").addEventListener("click", () => saveApp(row));
+    }
+
+    async function mutateInbox(key, status) {
+      applySnapshot(await api("/api/inbox/status", { key, status }));
+      state.selected = { kind: "job", key };
+      render();
+    }
+
+    async function markApplied(key) {
+      const job = jobByKey(key);
+      const notes = $("note")?.value || "";
+      applySnapshot(await api("/api/mark-applied", { key, notes }));
+      state.tab = "pipeline";
+      document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === "pipeline"));
+      const i = visibleApps().findIndex((row) => job && row.company === job.company && row.role === job.title);
+      state.selected = { kind: "app", i: Math.max(i, 0) };
+      render();
+    }
+
+    async function saveApp(row) {
+      const status = $("app-status").value;
+      const notes = $("note")?.value || "";
+      applySnapshot(await api("/api/application/status", {
+        company: row.company,
+        role: row.role,
+        status,
+        notes,
+      }));
+      render();
+    }
+
+    $("tabs").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      state.tab = btn.dataset.tab;
+      state.selected = null;
+      document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b === btn));
+      render();
+    });
+    $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+    $("portal").addEventListener("change", (e) => { state.portal = e.target.value; render(); });
+    $("rows").addEventListener("click", (e) => {
+      const tr = e.target.closest("tr");
+      if (!tr) return;
+      if (tr.dataset.kind === "job") state.selected = { kind: "job", key: tr.dataset.key };
+      else state.selected = { kind: "app", i: Number(tr.dataset.i) };
+      render();
+    });
+
+    api("/api/state").then(applySnapshot).catch((err) => {
+      $("empty").hidden = false;
+      $("empty").textContent = err.message;
+    });
+  </script>
+</body>
+</html>

@@ -31,6 +31,7 @@ To prevent duplication and configuration drift, this workspace uses a unified th
 | `/interview` | Interview prep for a tracked application |
 | `/outcome` | Record application outcomes |
 | `/upskill` | Skill-gap analysis and learning plan |
+| `/tracker` | Localhost job inbox + pipeline UI |
 | `/expand`, `/gmail-sync`, `/notion-sync`, `/html-report`, `/add-portal`, `/add-template`, `/reset` | Supporting workflows |
 
 ## Grok tool mapping
